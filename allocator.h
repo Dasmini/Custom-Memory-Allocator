@@ -27,4 +27,9 @@ void heap_init();
  */
 unsigned char *my_malloc(int size);
 
+/**
+ * @brief Prints all block details
+ */
+void dump_heap();
+
 #endif

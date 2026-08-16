@@ -11,5 +11,7 @@ int main()
     printf("Ptr 2 = %p\n",cptr1);
     char *cptr2 = my_malloc(2);
     printf("Ptr 3 = %p\n",cptr2);
+
+    dump_heap();
     
 }
