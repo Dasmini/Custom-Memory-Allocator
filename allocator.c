@@ -34,6 +34,34 @@ void heap_init()
     free_list_head = block;
 }
 
+void coalesce()
+{
+    
+    Block *temp = free_list_head;
+    Block *current;
+    Block *next_address;
+    while(temp != NULL)
+    {
+        printf("Before calculation\n");
+        fflush(stdout);
+        printf("temp = %p\n", (void *)temp);
+        printf("size = %d\n", temp->size);
+        next_address = (Block *)((char *)temp + (sizeof(Block) + temp -> size));
+        printf("next_address = %p\n", (void *)next_address);
+        printf("temp->next = %p\n", (void *)temp->next);
+        if((temp -> next != NULL) && next_address == temp ->next)
+        {
+            printf("inside if\n");
+            current = temp;
+            temp = temp -> next;
+            current -> size = sizeof(Block) + temp -> size;
+            current -> next = temp -> next;
+            
+        }
+        temp = current -> next;
+    }
+}
+
 unsigned char *my_malloc(int size)
 {
     Block *temp = free_list_head;
@@ -75,6 +103,16 @@ unsigned char *my_malloc(int size)
         prevBlock = temp;
         temp = temp -> next;
     }
-    return NULL;
-    
+    return NULL; 
+}
+
+void my_free(void *ptr)
+{
+    if(ptr == NULL)
+        return;
+    char *adrs = (char *)ptr;
+    Block *block = (Block *)(adrs - sizeof(Block));
+    block -> is_free = FREE;
+    block -> next = free_list_head;
+    free_list_head = block;
 }

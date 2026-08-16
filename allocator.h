@@ -19,6 +19,13 @@ extern Block *free_list_head;
 void heap_init();
 
 /**
+ * @brief Joins adjacent free blocks together
+ * 
+ * @param
+ */
+void coalesce();
+
+/**
  * @brief Performs custom malloc
  * 
  * @param size The number of bytes that need to be allocated
@@ -26,6 +33,13 @@ void heap_init();
  *                      otherwise returns NULL
  */
 unsigned char *my_malloc(int size);
+
+/**
+ * @brief Frees the used memory and markes it available for allocation
+ * 
+ * @param
+ */
+void my_free(void *ptr);
 
 /**
  * @brief Prints all block details

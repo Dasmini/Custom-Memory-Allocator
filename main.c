@@ -11,7 +11,15 @@ int main()
     printf("Ptr 2 = %p\n",cptr1);
     char *cptr2 = my_malloc(2);
     printf("Ptr 3 = %p\n",cptr2);
+    char *cptr3 = my_malloc(20);
 
     dump_heap();
-    
+    my_free(cptr1);
+    my_free(cptr2);
+    printf("After freeing 1\n");
+    dump_heap();
+    printf("After coalece:\n");
+    coalesce();
+
+    return 0;
 }
