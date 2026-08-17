@@ -46,4 +46,10 @@ void my_free(void *ptr);
  */
 void dump_heap();
 
+/**
+ * @brief Rearranges the freelist if needed while coalescing
+ */
+void fix_free_list(Block *current, Block *next_block);
+
+
 #endif

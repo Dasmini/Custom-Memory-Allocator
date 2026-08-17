@@ -34,32 +34,71 @@ void heap_init()
     free_list_head = block;
 }
 
+void fix_free_list(Block *current, Block *next_block)
+{
+    Block *temp = free_list_head;
+    Block *prev_block = NULL;
+    printf("Free list head : %p\n", free_list_head);
+    if(next_block == free_list_head)
+    {
+        free_list_head = free_list_head -> next;
+        printf("Next block is the free list head\n");
+    }
+        
+    if((next_block != temp) && (next_block -> next == current))
+    {
+        while(temp != next_block)
+        {
+            prev_block = temp;
+            temp = temp -> next;
+            printf("temp : %p\n", temp);
+        }
+        printf("Successfull while\n");
+        printf("Prev adress : %p\n", prev_block);
+        prev_block -> next = current;
+    }
+    else
+        current -> next = next_block -> next;
+}
+
 void coalesce()
 {
-    
-    Block *temp = free_list_head;
-    Block *current;
-    Block *next_address;
-    while(temp != NULL)
+    Block *current = (Block *)heap;
+    Block *next_block;
+    int total_size = 0;
+    while(total_size < POOL_SIZE)
     {
-        printf("Before calculation\n");
-        fflush(stdout);
-        printf("temp = %p\n", (void *)temp);
-        printf("size = %d\n", temp->size);
-        next_address = (Block *)((char *)temp + (sizeof(Block) + temp -> size));
-        printf("next_address = %p\n", (void *)next_address);
-        printf("temp->next = %p\n", (void *)temp->next);
-        if((temp -> next != NULL) && next_address == temp ->next)
+        
+        if(current -> is_free == USED)
         {
-            printf("inside if\n");
-            current = temp;
-            temp = temp -> next;
-            current -> size = sizeof(Block) + temp -> size;
-            current -> next = temp -> next;
-            
+            total_size += current -> size + sizeof(Block);
+            current = (Block *)((char *)current + (current -> size + sizeof(Block)));
+            continue;
         }
-        temp = current -> next;
-    }
+
+        /*
+        if(current -> next == NULL)
+        {
+            total_size += current -> size + sizeof(Block);
+            break;
+        }
+        */
+        
+        next_block = (Block *)((char *)current + (current -> size + sizeof(Block)));
+
+        if(next_block -> is_free == FREE)
+        {
+            fix_free_list(current, next_block);
+            current -> size = current -> size + sizeof(Block) + next_block -> size;
+            if((total_size + current -> size + sizeof(Block)) == POOL_SIZE)
+                break;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        }
+        else
+        {
+            total_size += current -> size + sizeof(Block);
+            current = next_block;
+        }
+    }   
 }
 
 unsigned char *my_malloc(int size)

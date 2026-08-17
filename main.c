@@ -16,10 +16,11 @@ int main()
     dump_heap();
     my_free(cptr1);
     my_free(cptr2);
+    my_free(cptr3);
     printf("After freeing 1\n");
     dump_heap();
-    printf("After coalece:\n");
     coalesce();
-
+    printf("After coalece:\n");
+    dump_heap();
     return 0;
 }
