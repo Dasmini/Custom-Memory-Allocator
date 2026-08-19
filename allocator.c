@@ -34,6 +34,7 @@ void heap_init()
     free_list_head = block;
 }
 
+/*
 void fix_free_list(Block *current, Block *next_block)
 {
     Block *temp = free_list_head;
@@ -45,7 +46,7 @@ void fix_free_list(Block *current, Block *next_block)
         printf("Next block is the free list head\n");
     }
         
-    if((next_block != temp) && (next_block -> next == current))
+    if((next_block != temp) && (current == next_block -> next))
     {
         while(temp != next_block)
         {
@@ -59,6 +60,26 @@ void fix_free_list(Block *current, Block *next_block)
     }
     else
         current -> next = next_block -> next;
+}
+*/
+
+void remove_from_free_list(Block *next_block)
+{
+    Block *temp = free_list_head;
+    Block *prev_block = NULL;
+    if(next_block == free_list_head)
+    {
+        free_list_head = free_list_head -> next;
+        return;
+    }
+        
+    while(temp != next_block)
+    {
+        prev_block = temp;
+        temp = temp -> next;
+        printf("temp : %p\n", temp);
+    }
+    prev_block -> next = next_block -> next;
 }
 
 void coalesce()
@@ -88,7 +109,7 @@ void coalesce()
 
         if(next_block -> is_free == FREE)
         {
-            fix_free_list(current, next_block);
+            remove_from_free_list(next_block);
             current -> size = current -> size + sizeof(Block) + next_block -> size;
             if((total_size + current -> size + sizeof(Block)) == POOL_SIZE)
                 break;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -147,11 +168,15 @@ unsigned char *my_malloc(int size)
 
 void my_free(void *ptr)
 {
+    printf("The block to be freed : %p\n",ptr);
     if(ptr == NULL)
         return;
     char *adrs = (char *)ptr;
     Block *block = (Block *)(adrs - sizeof(Block));
+    if(block -> is_free == FREE)
+        return;
     block -> is_free = FREE;
     block -> next = free_list_head;
     free_list_head = block;
+    //coalesce();
 }

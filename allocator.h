@@ -47,9 +47,9 @@ void my_free(void *ptr);
 void dump_heap();
 
 /**
- * @brief Rearranges the freelist if needed while coalescing
+ * @brief Removes the next free block in memory while colecsing and establishes the correct link
  */
-void fix_free_list(Block *current, Block *next_block);
+void remove_from_free_list(Block *next_block);
 
 
 #endif
