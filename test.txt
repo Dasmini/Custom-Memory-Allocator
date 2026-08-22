@@ -1,11 +1,13 @@
 init
-alloc a 10
-alloc b 35
-alloc c 20
+alloc a 100
+alloc b 200
+alloc c 50
+free b
+alloc d 150
 dump
-free
+stats
 free a
+free c
+free d
 dump
-alloc d 25
-dump
-stat
+stats

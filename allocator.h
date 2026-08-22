@@ -26,7 +26,7 @@ extern Block *free_list_head;
 void heap_init();
 
 /**
- * @brief Reduces external fragmentation by combining adjacent free blocks, 
+ * @brief Reduces external fragmentation by combining next adjacent free blocks, 
  *        making previously-unusable split-up free space available for 
  *        larger future allocations again.
  * 

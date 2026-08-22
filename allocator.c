@@ -137,7 +137,7 @@ void *my_malloc(int size)
     Block *nextBlock = NULL;
     Block *prevBlock = NULL;
     char *alloc_adrs;
-    int free_size;  
+    long unsigned int free_size;  
     size = (size + ALIGNMENT_THRESHOLD - 1) / ALIGNMENT_THRESHOLD * ALIGNMENT_THRESHOLD;
     while(temp != NULL)
     {

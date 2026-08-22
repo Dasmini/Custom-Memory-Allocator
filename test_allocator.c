@@ -12,10 +12,7 @@ typedef struct Label
     char *label_ptr;
 } Label;
 Label label[MAX_TEST];
-void call_my_malloc()
-{
-    char *token = strtok(NULL, " ");
-}
+
 void test_fun()
 {
     char input[MAX_TEST];
@@ -96,7 +93,7 @@ void test_fun()
         {
             dump_heap();
         }
-        else if(strcmp(token, "stat") == 0)
+        else if(strcmp(token, "stats") == 0)
         { 
             stat_heap();
         }
