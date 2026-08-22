@@ -114,7 +114,7 @@ Thread safety, mmap/sbrk, multiple arenas, garbage collection, calloc/realloc, a
 
 ## Author
 
-Dasmini D
+Dasmini D ❤️
+
 ### Links
-[Github](https://github.com/Dasmini)
-[Linkedin](https://www.linkedin.com/in/dasmini-d-265b3920b/)
+[Github](https://github.com/Dasmini) | [Linkedin](https://www.linkedin.com/in/dasmini-d-265b3920b/)
