@@ -21,7 +21,6 @@ I'm transitioning from IT operations into Embedded Systems / Firmware Engineerin
 
 ## Project Structure
 
-Custom_memory_allocator/
 ├── allocator.h        # Function prototypes + Block struct
 ├── allocator.c         # heap_init, my_malloc, my_free, coalesce, dump_heap, heap_stats
 ├── main.c                # Entry point
@@ -34,7 +33,6 @@ Custom_memory_allocator/
 
 ```
 git clone https://github.com/Dasmini/Custom-Memory-Allocator
-cd Custom_memory_allocator
 make
 ./allocator < test.txt
 ```
