@@ -68,6 +68,7 @@ void stat_heap()
     printf("Block count           : %d\n", block_count - 1);
     printf("Largest free block    : %d\n", largest_free_block);
 }
+
 void heap_init()
 {
     Block *block = (Block *)heap;
@@ -77,23 +78,24 @@ void heap_init()
     free_list_head = block;
 }
 
-void remove_from_free_list(Block *next_block)
+void remove_from_free_list(Block *rem_block)
 {
     Block *temp = free_list_head;
     Block *prev_block = NULL;
-    if(next_block == free_list_head)
+    if(rem_block == free_list_head)
     {
         free_list_head = free_list_head -> next;
         return;
     }
         
-    while(temp != next_block)
+    while(temp != rem_block)
     {
         prev_block = temp;
         temp = temp -> next;
     }
-    prev_block -> next = next_block -> next;
+    prev_block -> next = rem_block -> next;
 }
+
 
 void coalesce()
 {
