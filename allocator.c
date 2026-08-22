@@ -9,21 +9,64 @@ void dump_heap()
     Block *block = (Block *)heap;
     int total_size = 0;
     int block_count = 1;
+    printf("=============HEAP DUMP=============\n");
+    printf("\n");
     while(total_size < POOL_SIZE)
     {
-        printf("Block - %d\n", block_count);
-        printf("Block start address -  %p\n", block);
-        printf("Block Size - %d\n", block -> size);
+        printf("[%d] %p ", block_count, block);
+        printf("Size = %-5d", block -> size);
         if (block -> is_free == USED)
-            printf("Block status - USED\n");
+            printf("  USED\n");
         else
-            printf("Block status - FREE\n");
-        printf("\n");
+            printf("  FREE\n");
+        //printf("\n");
 
         block_count++;
         total_size += block -> size + sizeof(Block);
         block = (Block *)((char *)block + (block -> size + sizeof(Block)));
+        if(block ->size < 0)
+        {
+            printf("Error : Size negative\nDump heap terminating...\n");
+            return;
+        }
     }
+    printf("\n");
+    printf("===================================\n");
+    printf("\n");
+}
+
+void stat_heap()
+{
+    Block *block = (Block *)heap;
+    int total_size = 0;
+    int total_used = 0;
+    int total_free = 0;
+    int block_count = 1;
+    int largest_free_block = 0;
+    if (free_list_head != NULL)
+        largest_free_block = free_list_head -> size;
+    while(total_size < POOL_SIZE)
+    {
+        
+        if(block ->is_free == FREE)
+        {
+            total_free += block -> size;
+            largest_free_block = block -> size > largest_free_block ? block -> size : largest_free_block;
+        }
+        else
+        {
+            
+            total_used += block -> size;
+        }
+        total_size += block -> size + sizeof(Block);
+        block = (Block *)((char *)block + (block -> size + sizeof(Block)));
+        block_count++;
+    }
+    printf("Pool size             : %d\n", POOL_SIZE);
+    printf("Total used            : %d\n", total_used);
+    printf("Total free            : %d\n", total_free);
+    printf("Block count           : %d\n", block_count - 1);
+    printf("Largest free block    : %d\n", largest_free_block);
 }
 void heap_init()
 {
@@ -33,35 +76,6 @@ void heap_init()
     block-> next = NULL;
     free_list_head = block;
 }
-
-/*
-void fix_free_list(Block *current, Block *next_block)
-{
-    Block *temp = free_list_head;
-    Block *prev_block = NULL;
-    printf("Free list head : %p\n", free_list_head);
-    if(next_block == free_list_head)
-    {
-        free_list_head = free_list_head -> next;
-        printf("Next block is the free list head\n");
-    }
-        
-    if((next_block != temp) && (current == next_block -> next))
-    {
-        while(temp != next_block)
-        {
-            prev_block = temp;
-            temp = temp -> next;
-            printf("temp : %p\n", temp);
-        }
-        printf("Successfull while\n");
-        printf("Prev adress : %p\n", prev_block);
-        prev_block -> next = current;
-    }
-    else
-        current -> next = next_block -> next;
-}
-*/
 
 void remove_from_free_list(Block *next_block)
 {
@@ -77,7 +91,6 @@ void remove_from_free_list(Block *next_block)
     {
         prev_block = temp;
         temp = temp -> next;
-        printf("temp : %p\n", temp);
     }
     prev_block -> next = next_block -> next;
 }
@@ -97,14 +110,6 @@ void coalesce()
             continue;
         }
 
-        /*
-        if(current -> next == NULL)
-        {
-            total_size += current -> size + sizeof(Block);
-            break;
-        }
-        */
-        
         next_block = (Block *)((char *)current + (current -> size + sizeof(Block)));
 
         if(next_block -> is_free == FREE)
@@ -122,53 +127,57 @@ void coalesce()
     }   
 }
 
-unsigned char *my_malloc(int size)
+void *my_malloc(int size)
 {
+    if(size <= 0)
+        return NULL;
     Block *temp = free_list_head;
     Block *nextBlock = NULL;
     Block *prevBlock = NULL;
     char *alloc_adrs;
-    int free_size;
+    int free_size;  
+    size = (size + ALIGNMENT_THRESHOLD - 1) / ALIGNMENT_THRESHOLD * ALIGNMENT_THRESHOLD;
     while(temp != NULL)
     {
         
         if(temp -> is_free == FREE  && temp -> size >= size)
         {
-            //printf("Space is found at %p\n", temp);
             temp -> is_free = USED;
             free_size = temp -> size - size;
             nextBlock = temp -> next;
-            temp -> size = size;
-            temp -> next = (Block *)(((char *)temp) + sizeof(Block) + size);
             alloc_adrs = ((char *)temp) + sizeof(Block);
 
-            //printf("New free space header starts at %p\n", temp -> next);
-            Block *newBlock = temp -> next;
-            newBlock -> size = free_size - sizeof(Block);
-            newBlock -> is_free = FREE;
-            newBlock -> next = nextBlock;
-
+            if(free_size >= sizeof(Block) + ALIGNMENT_THRESHOLD)
+            {
+                temp -> size = size;
+                temp -> next = (Block *)(((char *)temp) + sizeof(Block) + size);
+                Block *newBlock = temp -> next;
+                newBlock -> size = free_size - sizeof(Block);
+                newBlock -> is_free = FREE;
+                newBlock -> next = nextBlock;
+                nextBlock = newBlock;
+            }
+            
             if(temp == free_list_head)
             {
-                //printf("newBlock is being assigned as free list head\n");
-                free_list_head = newBlock;
+                free_list_head = nextBlock;
             }
             else
             {
-                //printf("Previous block is linked to new block\n");
-                prevBlock -> next = newBlock;
+                prevBlock -> next = nextBlock;
             }
-            return alloc_adrs;
+            
+            return (void *)alloc_adrs;
         }
         prevBlock = temp;
         temp = temp -> next;
     }
+    printf("ERROR : Required size of memory not available\n");
     return NULL; 
 }
 
 void my_free(void *ptr)
 {
-    printf("The block to be freed : %p\n",ptr);
     if(ptr == NULL)
         return;
     char *adrs = (char *)ptr;
@@ -178,5 +187,5 @@ void my_free(void *ptr)
     block -> is_free = FREE;
     block -> next = free_list_head;
     free_list_head = block;
-    //coalesce();
+    coalesce();
 }

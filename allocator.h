@@ -1,9 +1,11 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 
-#define POOL_SIZE 1000
+#define ALIGNMENT_THRESHOLD 8
+#define POOL_SIZE 1024
 #define FREE 1
 #define USED 0
+//int pool_size = 1024;
 typedef struct Block
 {
     int size;
@@ -26,13 +28,23 @@ void heap_init();
 void coalesce();
 
 /**
- * @brief Performs custom malloc
- * 
- * @param size The number of bytes that need to be allocated
- * @return Returns the base address of the memory allocated if allocation is successful, 
- *                      otherwise returns NULL
+ * @brief Allocates a block of memory from the static heap pool.
+ *
+ * Searches the free list for the first block large enough to
+ * satisfy the request (first-fit). The requested size is rounded
+ * up to the nearest multiple of ALIGNMENT_THRESHOLD before the
+ * search. If the chosen free block is significantly larger than
+ * needed, it is split: the used portion is returned to the caller,
+ * and the remainder becomes a new free block reinserted into the
+ * free list.
+ *
+ * @param size Number of bytes requested by the caller. A value
+ *             of 0 causes the function to return NULL.
+ * @return Pointer to a usable memory region of at least @p size
+ *         bytes, or NULL if no free block large enough is
+ *         available, or if @p size is 0.
  */
-unsigned char *my_malloc(int size);
+void *my_malloc(int size);
 
 /**
  * @brief Frees the used memory and markes it available for allocation
@@ -46,6 +58,11 @@ void my_free(void *ptr);
  */
 void dump_heap();
 
+/**
+  * @brief Prints the stats of the memory
+  */
+ void stat_heap();
+ 
 /**
  * @brief Removes the next free block in memory while colecsing and establishes the correct link
  */

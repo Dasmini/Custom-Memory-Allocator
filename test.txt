@@ -1,0 +1,11 @@
+init
+alloc a 10
+alloc b 35
+alloc c 20
+dump
+free
+free a
+dump
+alloc d 25
+dump
+stat
