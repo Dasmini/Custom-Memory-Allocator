@@ -20,7 +20,7 @@ I'm transitioning from IT operations into Embedded Systems / Firmware Engineerin
 - Full Doxygen-style documentation on every public function
 
 ## Project Structure
-
+```
 ├── allocator.h        # Function prototypes + Block struct
 ├── allocator.c         # heap_init, my_malloc, my_free, coalesce, dump_heap, heap_stats
 ├── main.c                # Entry point
@@ -28,7 +28,7 @@ I'm transitioning from IT operations into Embedded Systems / Firmware Engineerin
 ├── test.txt             # Example command file
 ├── Makefile
 └── README.md
-
+```
 ## Building and running
 
 ```
